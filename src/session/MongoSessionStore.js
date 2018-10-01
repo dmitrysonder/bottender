@@ -1,5 +1,4 @@
 /* @flow */
-
 import isBefore from 'date-fns/is_before';
 import subMinutes from 'date-fns/sub_minutes';
 import { MongoClient } from 'mongodb';
@@ -8,6 +7,7 @@ import { type Session } from './Session';
 import { type SessionStore } from './SessionStore';
 
 type MongoCollection = {
+  find: () => { toArray: () => Promise<Array<any>> },
   findOne: (filter: Object) => Promise<{}>,
   updateOne: (filter: Object, data: Object, options: Object) => Promise<void>,
   remove: (filter: Object) => Promise<void>,
@@ -58,6 +58,17 @@ export default class MongoSessionStore implements SessionStore {
     } catch (e) {
       console.error(e);
       return null;
+    }
+  }
+
+  async all(): Promise<Array<?Session>> {
+    try {
+      const sessions = await this._sessions.find().toArray();
+
+      return sessions;
+    } catch (e) {
+      console.error(e);
+      return [];
     }
   }
 

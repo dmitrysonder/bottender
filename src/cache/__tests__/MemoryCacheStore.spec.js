@@ -27,6 +27,27 @@ describe('#get', () => {
   });
 });
 
+describe('#all', () => {
+  it('should get all the values in the sessions', async () => {
+    const store = new MemoryCacheStore(5);
+
+    await store.put('x', { a: 1 }, 5);
+    await store.put('y', { a: 2 }, 5);
+
+    const result1 = await store.all();
+
+    expect(result1).toEqual(expect.arrayContaining([{ a: 1 }, { a: 2 }]));
+  });
+
+  it('should return empty array when there is no item in sessions or all of them are expired', async () => {
+    const store = new MemoryCacheStore(5);
+
+    const result1 = await store.all();
+
+    expect(result1).toEqual([]);
+  });
+});
+
 describe('#put', () => {
   it('should store cache item for a given number of minutes', async () => {
     const _now = Date.now;
